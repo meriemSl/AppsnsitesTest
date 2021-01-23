@@ -38,7 +38,7 @@ onSubmit() {
     this.submitted = true;
 
     // reset alerts on submit
-    this.alertService.clear();
+    //this.alertService.clear();
 
     // stop here if form is invalid
     if (this.form.invalid) {

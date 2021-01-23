@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import { User } from '../models/User';
-
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 
 @Injectable({
@@ -11,12 +12,24 @@ import { User } from '../models/User';
 })
 export class LoginService {
 
-  constructor( private http: HttpClient , public jwtHelper : JwtHelperService) { }
+//  constructor( private http: HttpClient , public jwtHelper : JwtHelperService) { }
 
+
+  private currentUserSubject: BehaviorSubject<User>;
+    public currentUser: Observable<User>;
+
+    constructor(private http: HttpClient) {
+        this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
+        this.currentUser = this.currentUserSubject.asObservable();
+    }
+
+    public get currentUserValue(): User {
+        return this.currentUserSubject.value;
+    }
   
-  login(user: User): any {
-    return this.http.post<any>(`${environment.BACKEND}/${environment.LOGIN_ENDPOINT}`, user);
-  }
+//  login(user: User): any {
+//    return this.http.post<any>(`${environment.BACKEND}/${environment.LOGIN_ENDPOINT}`, user);
+//  }
 //  destroySession(): void {
 //    localStorage.removeItem(environment.SESSION);
 //  }

@@ -9,23 +9,25 @@ import { LoginComponent } from './pages/login/login.component';
 import { LoginService } from './services/login.service';
 import { AlertService } from './services/alert.service';
 import { FormService } from './services/form.service';
-import { HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from '@auth0/angular-jwt';
+import { UserListComponent } from './pages/user-list/user-list.component';
 @NgModule({
   declarations: [
     AppComponent,
     FormComponent,
-    LoginComponent
+    LoginComponent,
+    UserListComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClient
+    HttpClientModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+   // { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
    // { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
       LoginService,
       AlertService,
