@@ -1,10 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
-import {JwtHelperService} from '@auth0/angular-jwt';
+
 import { User } from '../models/User';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+
+//import * as firebase from 'firebase/app';
+
+import { AngularFireAuth } from "@angular/fire/auth";
+import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { Router } from "@angular/router";
 
 
 @Injectable({
@@ -13,62 +17,125 @@ import { map } from 'rxjs/operators';
 export class LoginService {
 
 //  constructor( private http: HttpClient , public jwtHelper : JwtHelperService) { }
-
+  userState: any;
 
   private currentUserSubject: BehaviorSubject<User>;
     public currentUser: Observable<User>;
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient ,
+        public afs: AngularFirestore,
+        public afAuth: AngularFireAuth,
+        public router: Router,
+        public ngZone: NgZone) {
         this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
         this.currentUser = this.currentUserSubject.asObservable();
+        this.afAuth.authState.subscribe(user => {
+            if (user) {
+              this.userState = user;
+              localStorage.setItem('user', JSON.stringify(this.userState));
+              JSON.parse(localStorage.getItem('user'));
+            } else {
+              localStorage.setItem('user', null);
+              JSON.parse(localStorage.getItem('user'));
+            }
+          })
+
     }
 
     public get currentUserValue(): User {
         return this.currentUserSubject.value;
     }
+    
+
+      
+        SignIn(email, password) {
+          return this.afAuth.signInWithEmailAndPassword(email, password)
+            .then((result) => {
+              this.ngZone.run(() => {
+                this.router.navigate(['users']);
+              });
+              this.SetUserData(result.user);
+            }).catch((error) => {
+                console.log(email);
+              window.alert(error.message)
+            })
+        }
+      
+        SignUp(email, password) {
+          return this.afAuth.createUserWithEmailAndPassword(email, password)
+            .then((result) => {
+              this.SendVerificationMail();
+              this.SetUserData(result.user);
+            }).catch((error) => {
+              window.alert(error.message)
+            })
+        }
+    
+        SendVerificationMail() {
+            return this.afAuth.currentUser.then(u => u.sendEmailVerification())
+            .then(() => {
+              this.router.navigate(['email-verification']);
+            })
+        }    
+      
+        ForgotPassword(passwordResetEmail) {
+          return this.afAuth.sendPasswordResetEmail(passwordResetEmail)
+          .then(() => {
+            window.alert('Password reset email sent, check your inbox.');
+          }).catch((error) => {
+            window.alert(error)
+          })
+        }
+      
+        get isLoggedIn(): boolean {
+          const user = JSON.parse(localStorage.getItem('user'));
+          return (user !== null && user.emailVerified !== false) ? true : false;
+        }
+      
+        GoogleAuth() {
+            //return firebase.auth().signInWithPopup((new firebase.auth.GoogleAuthProvider()));
+        }
+      
+        AuthLogin(provider) {
+          return this.afAuth.signInWithPopup(provider)
+          .then((result) => {
+             this.ngZone.run(() => {
+                this.router.navigate(['form']);
+              })
+            this.SetUserData(result.user);
+          }).catch((error) => {
+            window.alert(error)
+          })
+        }
+      
+        SetUserData(user) {
+          const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
+          const userState: User = {
+            uid: user.uid,
+            email: user.email,
+            userName:user.userName,
+            firstName:user.firstName,
+            lastName:user.lastName,
+            password:user.password,
+            gender:user.gender,
+            phone:user.phone,
+            emailVerified: user.emailVerified
+          }
+          return userRef.set(userState, {
+            merge: true
+          })
+        }
+       
+        SignOut() {
+          return this.afAuth.signOut().then(() => {
+            localStorage.removeItem('user');
+            this.router.navigate(['sign-in']);
+          })
+        }  
+    }
   
-//  login(user: User): any {
-//    return this.http.post<any>(`${environment.BACKEND}/${environment.LOGIN_ENDPOINT}`, user);
-//  }
-//  destroySession(): void {
-//    localStorage.removeItem(environment.SESSION);
-//  }
-//  logout(): void {
-//    this.destroySession();
-//  }
-  
-//   reLogin(session: Session): boolean {
-//    if (session !== null) {
-//      const refresh = {
-//        refresh_token: session.refresh_token
-//      };
-//      this.http.post<any>(`${environment.BACKEND}/${environment.REFRESH_TOKEN}`, refresh).subscribe((e) => {
-//        session.token = e.token;
-//        session.refresh_token = e.refresh_token;
-//        this.setSession(session);
-//      });
-//    }
-//    console.log('refresh done');
-//    return !this.jwtHelper.isTokenExpired(session.token);
-//  }
-
-//  setSession(payload: Session): void {
-//    localStorage.setItem(environment.SESSION, JSON.stringify(payload));
-//  }
-
-//  getSession(): Session {
-//    return JSON.parse(localStorage.getItem(environment.SESSION));
-//  }
-
-//  isLoggedIn() {
-//    const session = this.getSession();
-//    console.log(session)
-//    return session !== null ? !this.jwtHelper.isTokenExpired(session.token) : false;
-//  }
-  
-  
 
 
 
 
-}
+

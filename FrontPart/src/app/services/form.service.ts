@@ -13,7 +13,7 @@ export class FormService {
 
   updateUser(user: User): Observable<User> {
     return this.http.put<User>(
-      `${environment.BACKEND}/${environment.User_ENDPOINT}/${user.id}`,
+      `${environment.BACKEND}/${environment.User_ENDPOINT}/${user.uid}`,
       user
     );
   }

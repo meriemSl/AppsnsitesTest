@@ -12,14 +12,24 @@ import { FormService } from './services/form.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from '@auth0/angular-jwt';
 import { UserListComponent } from './pages/user-list/user-list.component';
+import { AngularFireModule } from "@angular/fire";
+import { AngularFireAuthModule } from "@angular/fire/auth";
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { environment } from 'src/environments/environment';
+import { NavComponent } from './shared/nav/nav.component';
+
 @NgModule({
   declarations: [
     AppComponent,
     FormComponent,
     LoginComponent,
-    UserListComponent
+    UserListComponent,
+    NavComponent
   ],
   imports: [
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
+    AngularFirestoreModule,
     BrowserModule,
     AppRoutingModule,
     FormsModule,
@@ -27,8 +37,7 @@ import { UserListComponent } from './pages/user-list/user-list.component';
     HttpClientModule
   ],
   providers: [
-   // { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-   // { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+
       LoginService,
       AlertService,
       FormService
@@ -36,3 +45,4 @@ import { UserListComponent } from './pages/user-list/user-list.component';
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+

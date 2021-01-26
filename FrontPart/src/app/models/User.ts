@@ -3,8 +3,8 @@ export class User {
     constructor() { 
         
      }
-
-        public id: number;
+        
+        //public id: number;
         public userName: string;
         public firstName: string;
         public lastName: string;
@@ -12,6 +12,7 @@ export class User {
         public password: string;
         public phone: string;
         public gender: string;
-  
+        public uid: string;
+        public emailVerified: boolean;
   }
   
