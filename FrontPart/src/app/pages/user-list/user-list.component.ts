@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { first } from 'rxjs/operators';
-import { FormService } from 'src/app/services/form.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-user-list',
@@ -11,20 +11,21 @@ export class UserListComponent implements OnInit {
 
     users = null;
 
-    constructor(private accountService: FormService) {}
+    constructor(private accountService: UserService) {}
 
     ngOnInit() {
         this.accountService.getAllUser()
             .pipe(first())
             .subscribe(users => this.users = users);
+            
     }
 
-    deleteUser(id: string) {
-        const user = this.users.find(x => x.id === id);
+    deleteUser(uid: string) {
+        const user = this.users.find(x => x.uid === uid);
         user.isDeleting = true;
-        this.accountService.delete(id)
+        this.accountService.delete(uid)
             .pipe(first())
-            .subscribe(() => this.users = this.users.filter(x => x.id !== id));
+            .subscribe(() => this.users = this.users.filter(x => x.id !== uid));
     }
 
 }

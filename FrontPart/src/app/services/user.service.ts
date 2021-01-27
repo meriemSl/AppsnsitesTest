@@ -7,10 +7,13 @@ import { User } from '../models/User';
 @Injectable({
   providedIn: 'root'
 })
-export class FormService {
+export class UserService {
 
     constructor(private http: HttpClient) {}
-
+  
+  AddUser(user: User): Observable<User> {
+      return this.http.post<User>(`${environment.BACKEND}/${environment.User_ENDPOINT}`, user);
+  }  
   updateUser(user: User): Observable<User> {
     return this.http.put<User>(
       `${environment.BACKEND}/${environment.User_ENDPOINT}/${user.uid}`,
@@ -19,7 +22,7 @@ export class FormService {
   }
   getAllUser() {
     return this.http
-      .get(`${environment.BACKEND}/${environment.User_ENDPOINT}`)
+      .get(`${environment.BACKEND}/${environment.Users_ENDPOINT}`)
       
   }
   getUser(id: number) {

@@ -8,7 +8,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './pages/login/login.component';
 import { LoginService } from './services/login.service';
 import { AlertService } from './services/alert.service';
-import { FormService } from './services/form.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from '@auth0/angular-jwt';
 import { UserListComponent } from './pages/user-list/user-list.component';
@@ -17,6 +16,7 @@ import { AngularFireAuthModule } from "@angular/fire/auth";
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { environment } from 'src/environments/environment';
 import { NavComponent } from './shared/nav/nav.component';
+import { UserService } from './services/user.service';
 
 @NgModule({
   declarations: [
@@ -40,7 +40,7 @@ import { NavComponent } from './shared/nav/nav.component';
 
       LoginService,
       AlertService,
-      FormService
+      UserService
   ],
   bootstrap: [AppComponent]
 })

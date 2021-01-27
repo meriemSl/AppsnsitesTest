@@ -7,13 +7,13 @@
   <div class="collapse navbar-collapse "  id="navbarSupportedContent">
     <ul class="navbar-nav m1-auto justify-content-end">
       <li class="nav-item">
-        <a class="nav-link" href="#">addUser</a>
+        <a class="nav-link"routerLink="/add" >addUser</a>
       </li><li class="nav-item">
-        <a class="nav-link" href="#">Users List</a>
+        <a class="nav-link" routerLink="/users" >Users List</a>
       </li>
       
       <li class="nav-item">
-        <a class="nav-link " href="#">log out</a>
+        <a class="nav-link" (click)="SignOut()" >log out</a>
       </li>
     </ul>
   </div>

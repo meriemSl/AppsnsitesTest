@@ -4,9 +4,10 @@ const FB_PROJECT_ID = 'appsnsitestest';
 
 export const environment = {
   production: false,
-  BACKEND: 'https://localhost/8080/',
+  BACKEND: 'http://localhost:8080',
   LOGIN_ENDPOINT: 'api/login_check',
   User_ENDPOINT: 'api/user',
+  Users_ENDPOINT : 'api/users',
   auth: {
     clientId: '2rpxkmGgvY376IVGIFyS4IoKBjD75HCA',
     clientDomain: 'dev-yzrc-p2u.us.auth0.com', // e.g., you.auth0.com

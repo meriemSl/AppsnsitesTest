@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { User } from '../models/User';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-//import * as firebase from 'firebase/app';
+import * as firebase from 'firebase/app';
 
 import { AngularFireAuth } from "@angular/fire/auth";
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
@@ -54,9 +54,9 @@ export class LoginService {
               this.ngZone.run(() => {
                 this.router.navigate(['users']);
               });
-              this.SetUserData(result.user);
+              localStorage.setItem('user', 'true');
+              //this.SetUserData(result.user);
             }).catch((error) => {
-                console.log(email);
               window.alert(error.message)
             })
         }
@@ -89,7 +89,7 @@ export class LoginService {
       
         get isLoggedIn(): boolean {
           const user = JSON.parse(localStorage.getItem('user'));
-          return (user !== null && user.emailVerified !== false) ? true : false;
+          return (user !== null ) ? true : false;
         }
       
         GoogleAuth() {
@@ -110,6 +110,7 @@ export class LoginService {
       
         SetUserData(user) {
           const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
+          console.log(this.afs.doc(`users/${user.uid}`));
           const userState: User = {
             uid: user.uid,
             email: user.email,
@@ -129,7 +130,7 @@ export class LoginService {
         SignOut() {
           return this.afAuth.signOut().then(() => {
             localStorage.removeItem('user');
-            this.router.navigate(['sign-in']);
+            this.router.navigate(['login']);
           })
         }  
     }
